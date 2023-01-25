@@ -65,6 +65,7 @@ int main(int argc, char **argv)
             netlink.registerGroup(RTNLGRP_NEIGH);
             cout << "Listens to neigh messages..." << endl;
             netlink.dumpRequest(RTM_GETNEIGH);
+            netlink.setRxBufSizeIfSupported(90000000);
 
             s.addSelectable(&netlink);
             while (true)
