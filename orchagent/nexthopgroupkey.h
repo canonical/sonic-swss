@@ -13,6 +13,7 @@ public:
     {
         m_overlay_nexthops = false;
         m_srv6_nexthops = false;
+        m_srv6_vpn = false;
         auto nhv = tokenize(nexthops, NHG_DELIMITER);
         for (const auto &nh : nhv)
         {
@@ -21,12 +22,13 @@ public:
     }
 
     /* ip_string|if_alias|vni|router_mac separated by ',' */
-    NextHopGroupKey(const std::string &nexthops, bool overlay_nh, bool srv6_nh = false)
+    NextHopGroupKey(const std::string &nexthops, bool overlay_nh, bool srv6_nh = false, bool srv6_vpn = false)
     {
         if (overlay_nh)
         {
             m_overlay_nexthops = true;
             m_srv6_nexthops = false;
+            m_srv6_vpn = false;
             auto nhv = tokenize(nexthops, NHG_DELIMITER);
             for (const auto &nh_str : nhv)
             {
@@ -38,6 +40,8 @@ public:
         {
             m_overlay_nexthops = false;
             m_srv6_nexthops = true;
+            m_srv6_vpn = srv6_vpn;
+
             auto nhv = tokenize(nexthops, NHG_DELIMITER);
             for (const auto &nh_str : nhv)
             {
@@ -47,10 +51,12 @@ public:
         }
     }
 
+
     NextHopGroupKey(const std::string &nexthops, const std::string &weights)
     {
         m_overlay_nexthops = false;
         m_srv6_nexthops = false;
+        m_srv6_vpn = false;
         std::vector<std::string> nhv = tokenize(nexthops, NHG_DELIMITER);
         std::vector<std::string> wtv = tokenize(weights, NHG_DELIMITER);
         bool set_weight = wtv.size() == nhv.size();
@@ -221,6 +227,11 @@ public:
         return m_srv6_nexthops;
     }
 
+    inline bool is_srv6_vpn() const
+    {
+        return m_srv6_vpn;
+    }
+
     void clear()
     {
         m_nexthops.clear();
@@ -230,6 +241,7 @@ private:
     std::set<NextHopKey> m_nexthops;
     bool m_overlay_nexthops;
     bool m_srv6_nexthops;
+    bool m_srv6_vpn;
 };
 
 #endif /* SWSS_NEXTHOPGROUPKEY_H */
