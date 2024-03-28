@@ -27,6 +27,7 @@ public:
     std::string getLinkTrainingStr(const PortConfig &port) const;
     std::string getAdminStatusStr(const PortConfig &port) const;
     std::string getPtTimestampTemplateStr(const PortConfig &port) const;
+    std::string getLoopbackModeStr(const PortConfig &port) const;
 
     bool parsePortConfig(PortConfig &port) const;
     bool validatePortConfig(PortConfig &port) const;
@@ -57,4 +58,5 @@ private:
     bool parsePortSubport(PortConfig &port, const std::string &field, const std::string &value) const;
     bool parsePortPtIntfId(PortConfig &port, const std::string &field, const std::string &value) const;
     bool parsePortPtTimestampTemplate(PortConfig &port, const std::string &field, const std::string &value) const;
+    bool parsePortLoopbackMode(PortConfig &port, const std::string &field, const std::string &value) const;
 };
