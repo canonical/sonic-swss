@@ -119,7 +119,7 @@ static const std::unordered_map<std::string, Port::Role> portRoleMap =
     { PORT_ROLE_DPC, Port::Role::Dpc }
 };
 
-static const std::unordered_map<std::string, sai_redis_link_event_damping_algorithm_t> linkEventDampingAlgorithmMap =
+static const std::unordered_map<std::string, sai_redis_link_event_damping_algorithm_t> g_linkEventDampingAlgorithmMap =
 {
     { "disabled", SAI_REDIS_LINK_EVENT_DAMPING_ALGORITHM_DISABLED },
     { "aied", SAI_REDIS_LINK_EVENT_DAMPING_ALGORITHM_AIED }
@@ -240,7 +240,7 @@ std::string PortHelper::getAdminStatusStr(const PortConfig &port) const
     return this->getFieldValueStr(port, PORT_ADMIN_STATUS);
 }
 
-std::string PortHelper::getDampingAlgoStr(const PortConfig &port) const
+std::string PortHelper::getDampingAlgorithm(const PortConfig &port) const
 {
     return this->getFieldValueStr(port, PORT_DAMPING_ALGO);
 }
@@ -771,8 +771,8 @@ bool PortHelper::parsePortLinkEventDampingAlgorithm(PortConfig &port, const std:
         return false;
     }
 
-    const auto &cit = linkEventDampingAlgorithmMap.find(value);
-    if (cit == linkEventDampingAlgorithmMap.cend())
+    const auto &cit = g_linkEventDampingAlgorithmMap.find(value);
+    if (cit == g_linkEventDampingAlgorithmMap.cend())
     {
         SWSS_LOG_ERROR("Failed to parse field(%s): invalid value(%s)", field.c_str(), value.c_str());
         return false;

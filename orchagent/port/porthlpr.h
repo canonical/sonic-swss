@@ -26,7 +26,7 @@ public:
     std::string getLearnModeStr(const PortConfig &port) const;
     std::string getLinkTrainingStr(const PortConfig &port) const;
     std::string getAdminStatusStr(const PortConfig &port) const;
-    std::string getDampingAlgoStr(const PortConfig &port) const;
+    std::string getDampingAlgorithm(const PortConfig &port) const;
 
     bool parsePortConfig(PortConfig &port) const;
     bool validatePortConfig(PortConfig &port) const;

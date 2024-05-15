@@ -3003,7 +3003,8 @@ task_process_status PortsOrch::setPortLinkTraining(const Port &port, bool state)
 }
 
 ReturnCode PortsOrch::setPortLinkEventDampingAlgorithm(Port &port,
-                                                       sai_redis_link_event_damping_algorithm_t &link_event_damping_algorithm) {
+                                                       sai_redis_link_event_damping_algorithm_t &link_event_damping_algorithm)
+{
     SWSS_LOG_ENTER();
     sai_attribute_t attr;
     attr.id = SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM;
@@ -3915,7 +3916,7 @@ void PortsOrch::doPortTask(Consumer &consumer)
                         {
                             SWSS_LOG_ERROR(
                                 "Failed to set port %s link event damping algorithm to %s",
-                                p.m_alias.c_str(), m_portHlpr.getDampingAlgoStr(pCfg).c_str()
+                                p.m_alias.c_str(), m_portHlpr.getDampingAlgorithm(pCfg).c_str()
                             );
                             it = taskMap.erase(it);
                             continue;
@@ -3926,7 +3927,7 @@ void PortsOrch::doPortTask(Consumer &consumer)
 
                          SWSS_LOG_NOTICE(
                              "Set port %s link event damping algorithm to %s",
-                             p.m_alias.c_str(), m_portHlpr.getDampingAlgoStr(pCfg).c_str()
+                             p.m_alias.c_str(), m_portHlpr.getDampingAlgorithm(pCfg).c_str()
                          );
                     }
                 }
