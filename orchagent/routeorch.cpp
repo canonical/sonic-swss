@@ -751,6 +751,9 @@ void RouteOrch::doTask(Consumer& consumer)
                             it = consumer.m_toSync.erase(it);
                         else
                             it++;
+
+                        /* Publish route state to advertise routes to Loopback interface */
+                        publishRouteState(ctx);
                         continue;
                     }
 
@@ -804,6 +807,18 @@ void RouteOrch::doTask(Consumer& consumer)
                     }
                     else
                     {
+                        if(ipv.size() != rmacv.size()){
+                            SWSS_LOG_ERROR("Skip route %s, it has an invalid router mac field %s", key.c_str(), remote_macs.c_str());
+                            it = consumer.m_toSync.erase(it);
+                            continue;
+                        }
+
+                        if(ipv.size() != vni_labelv.size()){
+                            SWSS_LOG_ERROR("Skip route %s, it has an invalid vni label field %s", key.c_str(), vni_labels.c_str());
+                            it = consumer.m_toSync.erase(it);
+                            continue;
+                        }
+
                         for (uint32_t i = 0; i < ipv.size(); i++)
                         {
                             if (i) nhg_str += NHG_DELIMITER;
@@ -2548,7 +2563,7 @@ bool RouteOrch::removeRoutePost(const RouteBulkContext& ctx)
 
     SWSS_LOG_INFO("Remove route %s with next hop(s) %s",
             ipPrefix.to_string().c_str(), it_route->second.nhg_key.to_string().c_str());
-    
+
     /* Publish removal status, removes route entry from APPL STATE DB */
     publishRouteState(ctx);
 

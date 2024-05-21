@@ -2202,9 +2202,10 @@ bool AclTable::addStageMandatoryRangeFields()
     SWSS_LOG_ENTER();
 
     string platform = getenv("platform") ? getenv("platform") : "";
+    string sub_platform = getenv("sub_platform") ? getenv("sub_platform") : "";
     auto match = SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE;
 
-    if ((platform == BRCM_PLATFORM_SUBSTRING) &&
+    if ((platform == BRCM_PLATFORM_SUBSTRING) && (sub_platform != BRCM_DNX_PLATFORM_SUBSTRING) &&
         (stage == ACL_STAGE_EGRESS))
     {
         return false;
@@ -2585,6 +2586,12 @@ bool AclTable::add(shared_ptr<AclRule> newRule)
     if (ruleIter != rules.end())
     {
         // If ACL rule already exists, delete it first
+        if (ruleIter->second->hasCounter())
+        {
+            // Deregister the flex counter before deleting the rule
+            // A new flex counter will be created when the new rule is added
+            m_pAclOrch->deregisterFlexCounter(*(ruleIter->second));
+        }
         if (ruleIter->second->remove())
         {
             rules.erase(ruleIter);
