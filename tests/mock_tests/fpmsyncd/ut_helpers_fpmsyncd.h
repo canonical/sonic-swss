@@ -100,7 +100,8 @@ namespace ut_fpmsyncd
     /* Build a Netlink object containing an SRv6 Local SID */
     struct nlmsg *create_srv6_localsid_nlmsg(uint16_t cmd, IpAddress *localsid, uint8_t block_len,
                                              uint8_t node_len, uint8_t func_len, uint8_t arg_len,
-                                             uint32_t action, char *vrf, uint16_t table_id = 10);
+                                             uint32_t action, char *vrf = NULL, IpAddress *nh = NULL,
+											 uint16_t table_id = 10);
     /* Free the memory allocated for a Netlink object */
     inline void free_nlobj(struct nlmsg *msg)
     {

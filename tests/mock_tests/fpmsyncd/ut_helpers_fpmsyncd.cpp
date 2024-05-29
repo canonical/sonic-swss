@@ -196,7 +196,9 @@ namespace ut_fpmsyncd
         uint8_t arg_len,
         uint32_t action,
         char *vrf,
-        uint16_t table_id)
+        IpAddress *adj,
+        uint16_t table_id
+        )
     {
         struct rtattr *nest;
 
@@ -290,6 +292,52 @@ namespace ut_fpmsyncd
         /* Add local SID behavior (action and parameters) */
         switch (action)
         {
+			case SRV6_LOCALSID_ACTION_END:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+						   SRV6_LOCALSID_ACTION,
+						   SRV6_LOCALSID_ACTION_END))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_END_X:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_END_X))
+                    return NULL;
+                if (!nl_attr_put(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_NH6,
+                                adj->getV6Addr(), 16))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_END_T:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_END_T))
+                    return NULL;
+                if (!nl_attr_put(&nl_obj->n, sizeof(*nl_obj),
+                                 SRV6_LOCALSID_VRFNAME,
+                                 vrf, (uint32_t)strlen(vrf)))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_END_DX4:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_END_DX4))
+                    return NULL;
+                if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_NH4,
+                                adj->getV4Addr()))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_END_DX6:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_END_DX6))
+                    return NULL;
+                if (!nl_attr_put(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_NH6,
+                                adj->getV6Addr(), 16))
+                    return NULL;
+				break;
             case SRV6_LOCALSID_ACTION_END_DT4:
                 if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
                                    SRV6_LOCALSID_ACTION,
@@ -320,6 +368,42 @@ namespace ut_fpmsyncd
                                  vrf, (uint32_t)strlen(vrf)))
                     return NULL;
                 break;
+			case SRV6_LOCALSID_ACTION_UN:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+						   SRV6_LOCALSID_ACTION,
+						   SRV6_LOCALSID_ACTION_UN))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_UA:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_UA))
+                    return NULL;
+                if (!nl_attr_put(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_NH6,
+                                adj->getV6Addr(), 16))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_UDX4:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_UDX4))
+                    return NULL;
+                if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_NH4,
+                                adj->getV4Addr()))
+                    return NULL;
+				break;
+			case SRV6_LOCALSID_ACTION_UDX6:
+				if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_ACTION,
+                                SRV6_LOCALSID_ACTION_UDX6))
+                    return NULL;
+                if (!nl_attr_put(&nl_obj->n, sizeof(*nl_obj),
+                                SRV6_LOCALSID_NH6,
+                                adj->getV6Addr(), 16))
+                    return NULL;
+				break;
             case SRV6_LOCALSID_ACTION_UDT4:
                 if (!nl_attr_put32(&nl_obj->n, sizeof(*nl_obj),
                                    SRV6_LOCALSID_ACTION,

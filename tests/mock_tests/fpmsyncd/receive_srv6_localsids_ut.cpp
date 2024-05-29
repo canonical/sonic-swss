@@ -55,6 +55,248 @@ namespace ut_fpmsyncd
 
 namespace ut_fpmsyncd
 {
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDEnd)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_END;
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "end");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End.X behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDEndX)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_END_X;
+        IpAddress _adj = IpAddress("2001:db8:1::1");
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "end.x");
+
+        std::string adj;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), true);
+        ASSERT_EQ(adj, "2001:db8:1::1");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End.T behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDEndT)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_END_T;
+        char *_vrf = "Vrf10";
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "end.t");
+
+        std::string vrf;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), true);
+        ASSERT_EQ(vrf, "Vrf10");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End.DX6 behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDEndDX6)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_END_DX6;
+        IpAddress _adj = IpAddress("2001:db8:1::1");
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "end.dx6");
+
+        std::string adj;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), true);
+        ASSERT_EQ(adj, "2001:db8:1::1");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), false);
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End.DX4 behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDEndDX4)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_END_DX4;
+        IpAddress _adj = IpAddress("10.0.0.1");
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "end.dx4");
+
+        std::string adj;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), true);
+        ASSERT_EQ(adj, "10.0.0.1");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
     /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End.DT4 behavior */
     TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDEndDT4)
     {
@@ -84,6 +326,22 @@ namespace ut_fpmsyncd
         std::string vrf;
         ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), true);
         ASSERT_EQ(vrf, "Vrf10");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
 
         /* Destroy the Netlink object and free the memory */
         free_nlobj(nl_obj);
@@ -121,6 +379,22 @@ namespace ut_fpmsyncd
 
         /* Destroy the Netlink object and free the memory */
         free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
     }
 
     /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the End.DT46 behavior */
@@ -152,6 +426,215 @@ namespace ut_fpmsyncd
         std::string vrf;
         ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), true);
         ASSERT_EQ(vrf, "Vrf10");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the uN behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDUN)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_UN;
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "un");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the uA behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDUA)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_UA;
+        IpAddress _adj = IpAddress("2001:db8:1::1");
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "ua");
+
+        std::string adj;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), true);
+        ASSERT_EQ(adj, "2001:db8:1::1");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the uDX6 behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDUDX6)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_UDX6;
+        IpAddress _adj = IpAddress("2001:db8:1::1");
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "udx6");
+
+        std::string adj;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), true);
+        ASSERT_EQ(adj, "2001:db8:1::1");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+    }
+
+    /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the uDX4 behavior */
+    TEST_F(FpmSyncdSRv6LocalSIDsTest, RecevingRouteWithSRv6LocalSIDUDX4)
+    {
+        ASSERT_NE(m_routeSync, nullptr);
+
+        /* Create a Netlink object containing an SRv6 Local SID */
+        IpAddress _localsid = IpAddress("fc00:0:1:1::");
+        uint8_t _block_len = 32;
+        uint8_t _node_len = 16;
+        uint8_t _func_len = 16;
+        uint8_t _arg_len = 0;
+        uint32_t _action = SRV6_LOCALSID_ACTION_UDX4;
+        IpAddress _adj = IpAddress("10.0.0.1");
+
+        struct nlmsg *nl_obj = create_srv6_localsid_nlmsg(RTM_NEWSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        std::string action;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), true);
+        ASSERT_EQ(action, "udx4");
+
+        std::string adj;
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), true);
+        ASSERT_EQ(adj, "10.0.0.1");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, NULL, &_adj);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "adj", adj), false);
 
         /* Destroy the Netlink object and free the memory */
         free_nlobj(nl_obj);
@@ -189,6 +672,22 @@ namespace ut_fpmsyncd
 
         /* Destroy the Netlink object and free the memory */
         free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
     }
 
     /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the uDT6 behavior */
@@ -223,6 +722,22 @@ namespace ut_fpmsyncd
 
         /* Destroy the Netlink object and free the memory */
         free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
     }
 
     /* Test Receiving a route containing an SRv6 Local SID nexthop bound to the uDT46 behavior */
@@ -254,6 +769,22 @@ namespace ut_fpmsyncd
         std::string vrf;
         ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), true);
         ASSERT_EQ(vrf, "Vrf10");
+
+        /* Destroy the Netlink object and free the memory */
+        free_nlobj(nl_obj);
+
+
+        nl_obj = create_srv6_localsid_nlmsg(RTM_DELSRV6LOCALSID, &_localsid, _block_len, _node_len, _func_len, _arg_len, _action, _vrf);
+        if (!nl_obj)
+            printf("Error\n\n");
+
+        /* Send the Netlink object to the FpmLink */
+        m_fpmLink->processRawMsg(&nl_obj->n);
+
+        /* Check that fpmsyncd created the correct entries in APP_DB */
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "action", action), false);
+
+        ASSERT_EQ(m_srv6LocalSidTable->hget("32:16:16:0:fc00:0:1:1::", "vrf", vrf), false);
 
         /* Destroy the Netlink object and free the memory */
         free_nlobj(nl_obj);
