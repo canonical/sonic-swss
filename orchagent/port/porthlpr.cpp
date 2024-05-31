@@ -586,6 +586,33 @@ bool PortHelper::parsePortTpid(PortConfig &port, const std::string &field, const
     return true;
 }
 
+
+
+bool PortHelper::parsePortDhcpRateLimit(PortConfig &port, const std::string &field, const std::string &value) const
+{
+    SWSS_LOG_ENTER();
+
+    if (value.empty())
+    {
+        SWSS_LOG_ERROR("Failed to parse field(%s): empty value is prohibited", field.c_str());
+        return false;
+    }
+
+    try
+    {
+        port.dhcp_rate_limit.value = toUInt32(value);
+        port.dhcp_rate_limit.is_set = true;
+    }
+    catch (const std::exception &e)
+    {
+        SWSS_LOG_ERROR("Failed to parse field(%s): %s", field.c_str(), e.what());
+        return false;
+    }
+
+    return true;
+}
+
+
 bool PortHelper::parsePortPfcAsym(PortConfig &port, const std::string &field, const std::string &value) const
 {
     SWSS_LOG_ENTER();
@@ -654,6 +681,7 @@ bool PortHelper::parsePortLinkTraining(PortConfig &port, const std::string &fiel
 
     return true;
 }
+
 
 template<typename T>
 bool PortHelper::parsePortSerdes(T &serdes, const std::string &field, const std::string &value) const
@@ -932,6 +960,14 @@ bool PortHelper::parsePortConfig(PortConfig &port) const
                 return false;
             }
         }
+
+        else if (field == PORT_DHCP_RATE_LIMIT)
+        {
+            if (!this->parsePortDhcpRateLimit(port, field, value))
+            {
+                return false;
+            }
+        }
         else if (field == PORT_TPID)
         {
             if (!this->parsePortTpid(port, field, value))
@@ -1100,6 +1136,10 @@ bool PortHelper::parsePortConfig(PortConfig &port) const
                 return false;
             }
         }
+
+
+        
+
         else if (field == PORT_SUBPORT)
         {
             if (!this->parsePortSubport(port, field, value))
@@ -1121,6 +1161,7 @@ bool PortHelper::parsePortConfig(PortConfig &port) const
                 return false;
             }
         }
+
         else
         {
             SWSS_LOG_WARN("Unknown field(%s): skipping ...", field.c_str());

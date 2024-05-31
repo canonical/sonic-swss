@@ -95,3 +95,4 @@
 #define PORT_SUBPORT               "subport"
 #define PORT_PT_INTF_ID            "pt_interface_id"
 #define PORT_PT_TIMESTAMP_TEMPLATE "pt_timestamp_template"
+#define PORT_DHCP_RATE_LIMIT       "dhcp_rate_limit"
