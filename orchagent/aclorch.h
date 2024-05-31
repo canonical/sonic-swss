@@ -23,6 +23,7 @@
 
 #define RULE_PRIORITY           "PRIORITY"
 #define MATCH_IN_PORTS          "IN_PORTS"
+#define MATCH_OUT_PORT          "OUT_PORT"
 #define MATCH_OUT_PORTS         "OUT_PORTS"
 #define MATCH_SRC_IP            "SRC_IP"
 #define MATCH_DST_IP            "DST_IP"
@@ -492,6 +493,9 @@ public:
     // Set to store the not configured ACL table port alias
     set<string> pendingPortSet;
 
+    // Is the ACL table bound to switch?
+    bool bindToSwitch = false;
+
 private:
     sai_object_id_t m_oid = SAI_NULL_OBJECT_ID;
     AclOrch *m_pAclOrch = nullptr;
@@ -581,6 +585,9 @@ public:
         return m_AclTables;
     }
 
+    bool bindEgrAclTableToSwitch(AclTable &table);
+    bool unbindEgrAclTableFromSwitch(AclTable &table);
+
 private:
     SwitchOrch *m_switchOrch;
     void doTask(Consumer &consumer);
@@ -588,7 +595,7 @@ private:
     void doAclRuleTask(Consumer &consumer);
     void doAclTableTypeTask(Consumer &consumer);
     void init(vector<TableConnector>& connectors, PortsOrch *portOrch, MirrorOrch *mirrorOrch, NeighOrch *neighOrch, RouteOrch *routeOrch);
-    void initDefaultTableTypes();
+    void initDefaultTableTypes(const string& platform, const string& sub_platform);
 
     void queryMirrorTableCapability();
     void queryAclActionCapability();
