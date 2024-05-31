@@ -217,6 +217,11 @@ public:
         bool is_set = false;
     } pt_timestamp_template; // Port timestamp template for Path Tracing
 
+    struct {
+        sai_port_loopback_mode_t value;
+        bool is_set = false;
+    } loopback_mode; // Port loopback mode
+
     std::string key;
     std::string op;
 
