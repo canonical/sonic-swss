@@ -17,7 +17,8 @@ else
 DBGFLAGS = -g -DNDEBUG
 endif
 
-CFLAGS_GTEST =
+CFLAGS_GTEST = -Wno-overloaded-virtual
+
 LDADD_GTEST = -L/usr/src/gtest
 
 ## Orchagent Unit Tests

@@ -138,16 +138,16 @@ orchagent_SOURCES += p4orch/p4orch.cpp \
  		     p4orch/ext_tables_manager.cpp
 
 orchagent_CFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_SAI) $(CFLAGS_ASAN)
-orchagent_CPPFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_SAI) $(CFLAGS_ASAN)
+orchagent_CPPFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_SAI) $(CFLAGS_ASAN) -Wno-overloaded-virtual
 orchagent_LDADD = $(LDFLAGS_ASAN) -lnl-3 -lnl-route-3 -lpthread -lsairedis -lsaimeta -lsaimetadata -lswsscommon -lzmq -lprotobuf -ldashapi
 
 routeresync_SOURCES = routeresync.cpp
 routeresync_CFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_ASAN)
-routeresync_CPPFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_ASAN)
+routeresync_CPPFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_ASAN) -Wno-overloaded-virtual
 routeresync_LDADD = $(LDFLAGS_ASAN) -lswsscommon
 
 orchagent_restart_check_SOURCES = orchagent_restart_check.cpp
-orchagent_restart_check_CPPFLAGS = $(DBGFLAGS) $(AM_CPPFLAGS) $(CFLAGS_COMMON) $(CFLAGS_ASAN)
+orchagent_restart_check_CPPFLAGS = $(DBGFLAGS) $(AM_CPPFLAGS) $(CFLAGS_COMMON) $(CFLAGS_ASAN) -Wno-overloaded-virtual
 orchagent_restart_check_LDADD = $(LDFLAGS_ASAN) -lhiredis -lswsscommon -lpthread
 
 if GCOV_ENABLED

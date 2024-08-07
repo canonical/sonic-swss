@@ -3,6 +3,7 @@
 #include <array>
 #include <net/if.h>
 #include <stdexcept>
+#include <cstdint>
 #include "subintf.h"
 
 using namespace swss;
