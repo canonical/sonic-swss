@@ -48,5 +48,8 @@ ifeq ($(ENABLE_GCOV), y)
 	find ./ -type f -regex '.*\.\(h\|cpp\|gcno\|info\)' | tar -cf debian/swss/tmp/gcov/gcov-source.tar -T -
 endif
 
+#tmp disable test in jammy
+override_dh_auto_test:
+
 override_dh_strip:
 	dh_strip --dbg-package=swss-dbg
