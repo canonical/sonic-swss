@@ -59,7 +59,7 @@ AC_CHECK_LIB([nl-genl-3], [nl_socket_get_cb])
 AC_CHECK_LIB([nl-route-3], [rtnl_route_nh_get_encap_mpls_dst])
 AC_CHECK_LIB([nl-nf-3], [nfnl_connect])
 
-CFLAGS_COMMON="-std=c++14 -Wall -fPIC -Wno-write-strings -I/usr/include/swss -I/usr/include"
+CFLAGS_COMMON="-std=c++17 -Wno-error=cpp -Wno-error=unused-result -Wall -fPIC -Wno-write-strings -I/usr/include/swss -I/usr/include"
 
 AC_ARG_WITH(libnl-3.0-inc,
 [  --with-libnl-3.0-inc=DIR

@@ -41,9 +41,15 @@ public:
         return static_cast<U>(m_values.at(type_name));
     }
 
-    class iterator : public std::iterator<std::input_iterator_tag, B>
+    class iterator
     {
     public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = B;
+        using difference_type = std::ptrdiff_t;
+        using pointer = B*;
+        using reference = B&;
+
         explicit iterator(const typename std::unordered_map<std::string, B>::iterator& it) : it(it) {}
 
         B& operator*() const
