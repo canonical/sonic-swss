@@ -2198,7 +2198,7 @@ void RouteSync::onRouteMsg(int nlmsg_type, struct nl_object *obj, char *vrf)
     string weights;
 
     string nhg_id_key;
-    uint32_t nhg_id = rtnl_route_get_nh_id(route_obj);
+    uint32_t nhg_id = rtnl_route_get_nhid(route_obj);
     if(nhg_id)
     {
         const auto itg = m_nh_groups.find(nhg_id);

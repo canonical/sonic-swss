@@ -880,7 +880,7 @@ TEST_F(FpmSyncdResponseTest, TestRouteMsgWithNHG)
 
     // Test 1: use a non-existent nh_id
     {
-        rtnl_route_set_nh_id(test_route, test_nh_id);
+        rtnl_route_set_nhid(test_route, test_nh_id);
 
         m_mockRouteSync.onRouteMsg(RTM_NEWROUTE, (nl_object*)test_route, nullptr);
 
@@ -909,7 +909,7 @@ TEST_F(FpmSyncdResponseTest, TestRouteMsgWithNHG)
 
         free(nlh);
 
-        rtnl_route_set_nh_id(test_route, test_nh_id);
+        rtnl_route_set_nhid(test_route, test_nh_id);
 
         m_mockRouteSync.onRouteMsg(RTM_NEWROUTE, (nl_object*)test_route, nullptr);
 
@@ -962,7 +962,7 @@ TEST_F(FpmSyncdResponseTest, TestRouteMsgWithNHG)
         m_mockRouteSync.onNextHopMsg(group_nlh, (int)(group_nlh->nlmsg_len - NLMSG_LENGTH(sizeof(struct nhmsg))));
 
         // create the route object referring to this next hop group
-        rtnl_route_set_nh_id(test_route, test_nhg_id);
+        rtnl_route_set_nhid(test_route, test_nhg_id);
         m_mockRouteSync.onRouteMsg(RTM_NEWROUTE, (nl_object*)test_route, nullptr);
 
         vector<FieldValueTuple> fvs;
@@ -2503,7 +2503,7 @@ TEST_F(FpmSyncdResponseTest, TestRouteMsgWithZmqEnabled_AllFieldsIncluded)
     m_mockRouteSync.onNextHopMsg(nlh, (int)(nlh->nlmsg_len - NLMSG_LENGTH(sizeof(struct nhmsg))));
     free(nlh);
 
-    rtnl_route_set_nh_id(test_route, test_nh_id);
+    rtnl_route_set_nhid(test_route, test_nh_id);
     m_mockRouteSync.onRouteMsg(RTM_NEWROUTE, (nl_object*)test_route, nullptr);
 
     // Verify the route was written to the database
@@ -2586,7 +2586,7 @@ TEST_F(FpmSyncdResponseTest, TestRouteMsgWithZmqDisabled_OnlyNonEmptyFields)
     m_mockRouteSync.onNextHopMsg(nlh, (int)(nlh->nlmsg_len - NLMSG_LENGTH(sizeof(struct nhmsg))));
     free(nlh);
 
-    rtnl_route_set_nh_id(test_route, test_nh_id);
+    rtnl_route_set_nhid(test_route, test_nh_id);
     m_mockRouteSync.onRouteMsg(RTM_NEWROUTE, (nl_object*)test_route, nullptr);
 
     // Verify the route was written to the database
