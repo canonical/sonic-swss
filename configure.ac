@@ -59,6 +59,7 @@ AC_CHECK_LIB([nl-genl-3], [nl_socket_get_cb])
 AC_CHECK_LIB([nl-route-3], [rtnl_route_nh_get_encap_mpls_dst])
 AC_CHECK_LIB([nl-nf-3], [nfnl_connect])
 
+# resolute: -Wno-error=cpp (<cstdbool> C++17 deprecation #warning); -Wno-error=unused-result ([[nodiscard]] std::remove in intfmgr.cpp)
 CFLAGS_COMMON="-std=c++17 -Wno-error=cpp -Wno-error=unused-result -Wall -fPIC -Wno-write-strings -I/usr/include/swss -I/usr/include"
 
 AC_ARG_WITH(libnl-3.0-inc,

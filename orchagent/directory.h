@@ -41,6 +41,7 @@ public:
         return static_cast<U>(m_values.at(type_name));
     }
 
+    // std::iterator base class deprecated in C++17; provide the iterator traits explicitly
     class iterator
     {
     public:
