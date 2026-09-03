@@ -156,6 +156,9 @@ class IpMulticastManagerTest : public ::testing::Test {
     sai_ipmc_api->get_ipmc_entry_attribute = mock_get_ipmc_entry_attribute;
     mock_sai_rpf_group = &mock_sai_rpf_group_;
     sai_rpf_group_api->create_rpf_group = mock_create_rpf_group;
+    sai_rpf_group_api->create_rpf_group_member =
+        mock_create_rpf_group_member;
+    sai_rpf_group_api->remove_rpf_group = mock_remove_rpf_group;
 
     mock_sai_router_intf = &mock_sai_router_intf_;
     sai_router_intfs_api->create_router_interface =
